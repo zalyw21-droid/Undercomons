@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Undercommons & The NHS — A Learning Tool</title>
+<style>
+:root {
+  --bg: #13151C;
+  --sidebar-bg: #0D0F14;
+  --card: #1C2030;
+  --card-hover: #222840;
+  --nhs: #4A9FD4;
+  --nhs-dim: rgba(74,159,212,0.12);
+  --under: #D4845A;
+  --under-dim: rgba(212,132,90,0.12);
+  --alt: #5BAB8A;
+  --alt-dim: rgba(91,171,138,0.12);
+  --text: #D0CCC4;
+  --text-dim: #7A7670;
+  --border: rgba(255,255,255,0.07);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Georgia',serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:16px;line-height:1.75;}
+
+/* SIDEBAR */
+#sidebar{width:260px;min-width:260px;background:var(--sidebar-bg);border-right:1px solid var(--border);padding:28px 0;position:fixed;height:100vh;overflow-y:auto;z-index:100;}
+.sidebar-title{padding:0 20px 22px;border-bottom:1px solid var(--border);margin-bottom:16px;}
+.sidebar-title h1{font-size:13px;font-weight:normal;color:var(--under);letter-spacing:.08em;text-transform:uppercase;line-height:1.5;margin-bottom:5px;}
+.sidebar-title p{font-size:11px;color:var(--text-dim);font-family:sans-serif;}
+nav a{display:block;padding:9px 20px;color:var(--text-dim);text-decoration:none;font-size:13px;font-family:sans-serif;transition:all .18s;border-left:2px solid transparent;}
+nav a:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+nav a.active{color:var(--nhs);border-left-color:var(--nhs);background:var(--nhs-dim);}
+.nav-section{padding:16px 20px 5px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,0.22);font-family:sans-serif;}
+
+/* MAIN */
+#main{margin-left:260px;flex:1;padding:52px 64px;max-width:920px;}
+.section{display:none;}
+.section.active{display:block;}
+
+/* TYPOGRAPHY */
+h2{font-size:28px;font-weight:normal;color:#fff;line-height:1.3;margin-bottom:12px;}
+h3{font-size:17px;font-weight:normal;color:#fff;margin-bottom:10px;}
+.section-tag{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);font-family:sans-serif;margin-bottom:10px;}
+.lead{font-size:16px;color:var(--text);max-width:640px;margin-bottom:0;}
+.section-header{margin-bottom:36px;}
+p{margin-bottom:0;}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:26px;margin-bottom:18px;}
+.card p+p{margin-top:12px;}
+.nhs-card{border-left:3px solid var(--nhs);background:var(--nhs-dim);}
+.under-card{border-left:3px solid var(--under);background:var(--under-dim);}
+.alt-card{border-left:3px solid var(--alt);background:var(--alt-dim);}
+.card-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-family:sans-serif;font-weight:bold;margin-bottom:9px;}
+.nhs-label{color:var(--nhs);}
+.under-label{color:var(--under);}
+.alt-label{color:var(--alt);}
+
+/* HERO */
+.hero{padding:10px 0 38px;border-bottom:1px solid var(--border);margin-bottom:38px;}
+.hero-sub{font-size:12px;font-family:sans-serif;color:var(--text-dim);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;}
+.hero h2{font-size:34px;margin-bottom:14px;}
+.hero p{font-size:16px;color:var(--text);max-width:600px;}
+.hero p+p{margin-top:10px;}
+.tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px;}
+.tag{padding:4px 12px;border-radius:20px;font-size:10px;font-family:sans-serif;letter-spacing:.05em;text-transform:uppercase;}
+.tag-nhs{background:var(--nhs-dim);color:var(--nhs);border:1px solid var(--nhs);}
+.tag-under{background:var(--under-dim);color:var(--under);border:1px solid var(--under);}
+.tag-alt{background:var(--alt-dim);color:var(--alt);border:1px solid var(--alt);}
+
+/* LEGEND */
+.legend{display:flex;gap:20px;flex-wrap:wrap;margin:16px 0 20px;}
+.legend-item{display:flex;align-items:center;gap:8px;font-family:sans-serif;font-size:13px;color:var(--text);}
+.ldot{width:9px;height:9px;border-radius:50%;}
+.dot-n{background:var(--nhs);}
+.dot-u{background:var(--under);}
+.dot-a{background:var(--alt);}
+
+/* TENSION BOX */
+.tension-box{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border-radius:8px;overflow:hidden;margin:20px 0;}
+.tension-side{padding:20px;}
+.tension-left{background:var(--nhs-dim);}
+.tension-right{background:var(--under-dim);}
+.tension-side h4{font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-family:sans-serif;font-weight:bold;margin-bottom:10px;}
+.tension-left h4{color:var(--nhs);}
+.tension-right h4{color:var(--under);}
+.tension-side ul{list-style:none;font-family:sans-serif;}
+.tension-side ul li{padding:4px 0;font-size:13px;color:var(--text);}
+.tension-side ul li::before{content:'— ';opacity:.4;}
+
+/* CONCEPT GRID */
+.concept-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0;}
+.concept-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px;cursor:pointer;transition:all .18s;}
+.concept-card:hover{background:var(--card-hover);border-color:var(--under);}
+.concept-card h4{font-size:14px;font-weight:normal;color:var(--under);margin-bottom:6px;}
+.concept-card p{font-size:13px;color:var(--text-dim);font-family:sans-serif;}
+
+/* BLOCKQUOTE */
+blockquote{border-left:3px solid var(--under);padding:15px 18px;margin:20px 0;background:rgba(212,132,90,0.07);border-radius:0 6px 6px 0;}
+blockquote p{font-style:italic;font-size:15px;color:var(--text);}
+blockquote cite{display:block;font-size:11px;font-family:sans-serif;color:var(--text-dim);margin-top:8px;font-style:normal;}
+
+/* CALLOUT */
+.callout{padding:16px 18px;border-radius:8px;margin:20px 0;font-size:14px;font-family:sans-serif;background:rgba(212,132,90,0.08);border:1px solid rgba(212,132,90,0.25);color:var(--text);}
+.callout strong{color:var(--under);}
+
+/* SCENARIOS */
+.scenario{background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:28px;overflow:hidden;}
+.scenario-header{padding:22px 26px;border-bottom:1px solid var(--border);}
+.scenario-header h3{font-size:16px;margin-bottom:7px;}
+.scenario-desc{font-size:13px;color:var(--text-dim);font-family:sans-serif;font-style:italic;}
+.scenario-tabs{display:flex;border-bottom:1px solid var(--border);}
+.stab{padding:11px 18px;font-size:11px;font-family:sans-serif;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;color:var(--text-dim);transition:all .18s;border-bottom:2px solid transparent;margin-bottom:-1px;}
+.stab:hover{color:var(--text);}
+.stab.t-nhs{color:var(--nhs);border-bottom-color:var(--nhs);}
+.stab.t-under{color:var(--under);border-bottom-color:var(--under);}
+.stab.t-alt{color:var(--alt);border-bottom-color:var(--alt);}
+.scenario-panel{padding:22px 26px;display:none;}
+.scenario-panel.active{display:block;}
+.scenario-panel p{font-size:15px;}
+.scenario-panel p+p{margin-top:12px;}
+
+/* KEY TERM */
+.kt{color:var(--under);font-style:italic;}
+
+/* HR */
+hr{border:none;border-top:1px solid var(--border);margin:30px 0;}
+
+/* FLASHCARDS */
+.flip-hint{font-size:11px;font-family:sans-serif;color:var(--text-dim);text-align:center;margin-bottom:14px;}
+.flashcard-container{perspective:1000px;margin-bottom:16px;}
+.flashcard{width:100%;min-height:220px;position:relative;transform-style:preserve-3d;transition:transform .45s;cursor:pointer;}
+.flashcard.flipped{transform:rotateY(180deg);}
+.fc-face{position:absolute;width:100%;min-height:220px;backface-visibility:hidden;border-radius:8px;padding:28px;display:flex;flex-direction:column;justify-content:center;}
+.fc-front{background:var(--card);border:1px solid var(--border);}
+.fc-back{background:var(--under-dim);border:1px solid var(--under);transform:rotateY(180deg);}
+.fc-nav{display:flex;justify-content:space-between;align-items:center;margin-top:4px;}
+.fc-btn{padding:8px 20px;background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:6px;cursor:pointer;font-family:sans-serif;font-size:13px;transition:all .18s;}
+.fc-btn:hover{border-color:var(--under);color:var(--under);}
+.fc-count{font-size:13px;font-family:sans-serif;color:var(--text-dim);}
+
+/* REFLECTION */
+.reflection-prompt{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:22px;margin-bottom:16px;}
+.prompt-num{font-size:10px;font-family:sans-serif;color:var(--alt);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;}
+.reflection-prompt>p{font-size:16px;color:#fff;margin-bottom:14px;}
+textarea{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:6px;padding:14px;color:var(--text);font-family:'Georgia',serif;font-size:14px;resize:vertical;min-height:100px;outline:none;}
+textarea:focus{border-color:var(--alt);}
+textarea::placeholder{color:rgba(255,255,255,0.18);}
+
+/* FOOTER */
+.page-footer{margin-top:60px;padding-top:28px;border-top:1px solid var(--border);font-family:sans-serif;font-size:12px;color:var(--text-dim);line-height:1.6;}
+
+/* CRITICAL LENS BOX */
+.critical-box{background:rgba(91,171,138,0.07);border:1px solid rgba(91,171,138,0.25);border-radius:8px;padding:20px;margin:20px 0;}
+.critical-box h4{font-size:11px;color:var(--alt);text-transform:uppercase;letter-spacing:.08em;font-family:sans-serif;margin-bottom:8px;}
+.critical-box p{font-size:14px;font-family:sans-serif;}
+
+@media(max-width:860px){
+  .concept-grid,.tension-box{grid-template-columns:1fr;}
+  #main{padding:30px 22px;}
+  #sidebar{display:none;}
+  #main{margin-left:0;}
+}
+</style>
+</head>
+<body>
+
+<!-- ======== SIDEBAR ======== -->
+<div id="sidebar">
+  <div class="sidebar-title">
+    <h1>The Undercommons<br>&amp; The NHS</h1>
+    <p>A Learning Tool for Clinicians</p>
+  </div>
+  <nav>
+    <div class="nav-section">Start here</div>
+    <a href="#" class="nav-link active" data-s="intro">Introduction</a>
+    <a href="#" class="nav-link" data-s="primer">The Book: A Primer</a>
+    <div class="nav-section">Core Concepts</div>
+    <a href="#" class="nav-link" data-s="consent">Consent &amp; Its Limits</a>
+    <a href="#" class="nav-link" data-s="power">Power &amp; Hierarchy</a>
+    <a href="#" class="nav-link" data-s="fugitivity">Fugitivity in Care</a>
+    <a href="#" class="nav-link" data-s="study">Study vs. Training</a>
+    <a href="#" class="nav-link" data-s="debt">Debt &amp; Obligation</a>
+    <div class="nav-section">Applied</div>
+    <a href="#" class="nav-link" data-s="scenarios">Clinical Scenarios</a>
+    <a href="#" class="nav-link" data-s="alternatives">Alternatives</a>
+    <div class="nav-section">Practice</div>
+    <a href="#" class="nav-link" data-s="flashcards">Concept Flashcards</a>
+    <a href="#" class="nav-link" data-s="reflection">Reflection Space</a>
+  </nav>
+</div>
+
+<!-- ======== MAIN ======== -->
+<div id="main">
+
+<!-- INTRO -->
+<div class="section active" id="intro">
+  <div class="hero">
+    <div class="hero-sub">Moten &amp; Harney · NHS Clinical Practice · Learning Tool</div>
+    <h2>What does fugitive thought<br>look like in the NHS?</h2>
+    <p>This tool applies the ideas of <em>The Undercommons: Fugitive Planning and Black Study</em> (Fred Moten &amp; Stefano Harney, 2013) to clinical practice — with particular focus on <strong>consent</strong>, <strong>power</strong>, and what <strong>alternatives</strong> might look like.</p>
+    <p>The aim is not to dismiss NHS frameworks but to see them with fresh, critical eyes — and to find, name, and nourish what already resists those frameworks in everyday care.</p>
+    <div class="tag-row">
+      <span class="tag tag-nhs">NHS Framework</span>
+      <span class="tag tag-under">Undercommons Critique</span>
+      <span class="tag tag-alt">Alternative Practice</span>
+    </div>
+  </div>
+
+  <h3 style="margin-bottom:14px;">How to use this tool</h3>
+  <div class="legend">
+    <div class="legend-item"><div class="ldot dot-n"></div>NHS Framework — how the institution frames things</div>
+    <div class="legend-item"><div class="ldot dot-u"></div>Undercommons Critique — what Moten &amp; Harney help us see</div>
+    <div class="legend-item"><div class="ldot dot-a"></div>Alternatives — practices that exist already, or might</div>
+  </div>
+  <p style="font-family:sans-serif;font-size:14px;color:var(--text-dim);">Work through the sections in order or dip in where you're most curious. <strong style="color:var(--text);">Clinical Scenarios</strong> is the most applied section — each scenario has three tabs you can toggle between. Use <strong style="color:var(--text);">Reflection Space</strong> to record your thinking.</p>
+
+  <hr>
+
+  <div class="card under-card" style="margin-bottom:16px;">
+    <div class="card-label under-label">A word of caution</div>
+    <h3>This is not a manual for changing everything</h3>
+    <p>Moten and Harney are not reformers. They do not think the institution can be fixed from within by better policies. But they do believe people are already doing something different — in the margins, below the threshold of institutional recognition. This tool helps you find and name that in your own practice.</p>
+  </div>
+
+  <div class="card nhs-card">
+    <div class="card-label nhs-label">Your context</div>
+    <h3>You are a clinician in the NHS</h3>
+    <p>You operate within a highly regulated, hierarchical institution built on frameworks of consent, capacity, risk, and accountability. You also care deeply about patients. This tool sits with the tension between those two facts — without pretending either one should simply give way to the other.</p>
+  </div>
+
+  <div class="critical-box" style="margin-top:20px;">
+    <h4>A sparring partner note</h4>
+    <p>The Undercommons is not a healthcare text. Applying it to the NHS involves translation and extrapolation — and some of that translation is genuinely contestable. As you work through this tool, notice where the framework illuminates things, and where it might mislead or romanticise. The goal is thinking, not agreement.</p>
+  </div>
+</div>
+
+<!-- PRIMER -->
+<div class="section" id="primer">
+  <div class="section-header">
+    <div class="section-tag">The Book</div>
+    <h2>The Undercommons: A Primer</h2>
+    <p class="lead">Fred Moten and Stefano Harney's 2013 collection of essays is about radical Black study, institutional critique, and the life that happens beneath official recognition.</p>
+  </div>
+
+  <div class="card">
+    <h3>What is "the undercommons"?</h3>
+    <p>Moten and Harney describe the undercommons as the space beneath the institution — not a place, but a set of relationships and practices that exist within and against official structures. It is where genuine <span class="kt">study</span> happens: open, collective, pleasurable inquiry, as opposed to the credentialing and discipline of formal training.</p>
+    <p>The undercommons is not a utopia. It is the necessary condition for genuine thought and genuine care to survive institutional capture.</p>
+  </div>
+
+  <blockquote>
+    <p>"The undercommons is not the realm of freedom but the practice of preparation — a space where people plan, together, against the terms the institution has set."</p>
+    <cite>— Moten &amp; Harney, paraphrased</cite>
+  </blockquote>
+
+  <div class="card">
+    <h3>The university as the institution</h3>
+    <p>The book focuses on the university — which it sees as capturing radical thought and converting it into credentials. The "good" academic works within the university while quietly subverting its terms. This is <span class="kt">fugitivity</span>: remaining within the institution while refusing its logic.</p>
+    <p>For this learning tool, the NHS plays the role the university plays in the book. It is an institution that captures genuine care and converts it into protocol, governance, documentation, and accountability. The question the book implicitly asks is: what are you doing in the undercommons of the NHS?</p>
+  </div>
+
+  <p style="font-family:sans-serif;font-size:13px;color:var(--text-dim);margin-bottom:14px;">Explore the core concepts — click any card to go deeper:</p>
+  <div class="concept-grid">
+    <div class="concept-card" onclick="goTo('consent')">
+      <h4>Consent</h4>
+      <p>A liberal mechanism that domesticates antagonism and produces compliance within a pre-designed structure.</p>
+    </div>
+    <div class="concept-card" onclick="goTo('power')">
+      <h4>Power</h4>
+      <p>Not just coercion but the structuring of what is thinkable, sayable, and possible in any encounter.</p>
+    </div>
+    <div class="concept-card" onclick="goTo('fugitivity')">
+      <h4>Fugitivity</h4>
+      <p>Not escape from the institution but escape within it — staying while refusing, quietly, the terms.</p>
+    </div>
+    <div class="concept-card" onclick="goTo('study')">
+      <h4>Study vs. Training</h4>
+      <p>Genuine collective inquiry versus the production of properly credentialed institutional subjects.</p>
+    </div>
+    <div class="concept-card" onclick="goTo('debt')">
+      <h4>Debt</h4>
+      <p>The social relation that binds people to the institution and structures their sense of freedom.</p>
+    </div>
+    <div class="concept-card" onclick="goTo('alternatives')">
+      <h4>Hapticality</h4>
+      <p>The capacity to feel with others — an alternative to the individualism of liberal consent.</p>
+    </div>
+  </div>
+</div>
+
+<!-- CONSENT -->
+<div class="section" id="consent">
+  <div class="section-header">
+    <div class="section-tag">Core Concept</div>
+    <h2>Consent &amp; Its Limits</h2>
+    <p class="lead">Informed consent is the cornerstone of medical ethics. The Undercommons helps us see what this framework conceals as well as what it enables.</p>
+  </div>
+
+  <div class="card nhs-card">
+    <div class="card-label nhs-label">NHS Framework</div>
+    <h3>Informed Consent</h3>
+    <p>The NHS consent framework, rooted in common law and the Mental Capacity Act 2005, requires that a patient: has capacity; receives sufficient information about risks, benefits, and alternatives; and decides voluntarily and without coercion. Montgomery v Lanarkshire (2015) further established that the standard is what a reasonable person would want to know, not what a clinician deems relevant. This is understood as a foundational protection of patient autonomy and dignity.</p>
+  </div>
+
+  <div class="card under-card">
+    <div class="card-label under-label">Undercommons Critique</div>
+    <h3>What consent conceals</h3>
+    <p>Moten and Harney would ask: consent to what, and within whose framework? The patient is offered a set of options — designed by clinical expertise, shaped by available resources, filtered through institutional protocol. What the patient can consent to is already pre-determined by a structure they did not design and did not choose.</p>
+    <p>The consent form is the moment where the patient is asked to become complicit in their own treatment — to say yes to something that was already arranged for them. This is not to say the clinician is malicious. It is to say that the structure within which consent happens already reflects power, and no amount of good intention removes that structure.</p>
+  </div>
+
+  <div class="tension-box">
+    <div class="tension-side tension-left">
+      <h4>What consent assumes</h4>
+      <ul>
+        <li>The patient is an autonomous individual</li>
+        <li>Information can be neutrally communicated</li>
+        <li>A "yes" or "no" captures their wishes</li>
+        <li>The power differential can be bracketed</li>
+        <li>Options offered are sufficient options</li>
+        <li>Voluntariness is achievable in clinical settings</li>
+      </ul>
+    </div>
+    <div class="tension-side tension-right">
+      <h4>What consent obscures</h4>
+      <ul>
+        <li>Options are pre-selected by the institution</li>
+        <li>Information is shaped by clinical framing</li>
+        <li>Power differentials are structural, not removable</li>
+        <li>Patient self-knowledge is not primary</li>
+        <li>"Voluntary" is relative to fear, hope, deference</li>
+        <li>The signature manages institutional liability too</li>
+      </ul>
+    </div>
+  </div>
+
+  <blockquote>
+    <p>"The problem with consent is not that it's wrong, but that it makes us feel the problem has been solved — when what it has actually done is manage the problem into compliance."</p>
+    <cite>— Extrapolating from Moten &amp; Harney's critique of liberal governance</cite>
+  </blockquote>
+
+  <div class="card">
+    <h3>The hardest case: Capacity &amp; Best Interests</h3>
+    <p>When capacity is absent, the Mental Capacity Act invokes <em>best interests</em>. This is where the critique becomes sharpest: the patient is reconstituted as an object of clinical management rather than a subject of their own life. The best interests decision is made by people who hold institutional power, drawing on clinical knowledge — but whose version of "interests" is it?</p>
+    <p>This does not mean best interests decisions are wrong. It means they should be accompanied by the deepest humility about what we do not and cannot know about another person's inner world.</p>
+  </div>
+
+  <div class="card alt-card">
+    <div class="card-label alt-label">Alternative Orientation</div>
+    <h3>Beyond the transactional moment</h3>
+    <p>What if instead of a consent event — a discrete moment where a signature is obtained — we thought of consent as an ongoing, relational, conversational process? What if the goal were not the patient's signature but genuine attunement: a felt sense, on both sides, that this decision has been arrived at together?</p>
+    <p>This is closer to what Moten and Harney call <span class="kt">hapticality</span> — care through mutual sensing rather than through transaction. It does not replace the legal framework but asks: what lives beneath and around it, and what would it take to let that breathe?</p>
+  </div>
+
+  <div class="callout">
+    <strong>Challenge for you:</strong> Think of the last time you obtained consent from a patient. What did you know about what they wanted <em>before</em> you presented the options? Did they offer any knowledge of themselves that didn't fit the form? Whose expertise led the encounter?
+  </div>
+
+  <div class="critical-box">
+    <h4>Blind spot worth naming</h4>
+    <p>The Undercommons critique of consent risks sounding like an argument for paternalism — "the framework is broken, so perhaps clinicians should just decide for patients." That is precisely the wrong direction. The critique is an argument for <em>more</em> patient expertise in the room, not less. Be careful not to hear it as licence for bypassing process. The alternative to inadequate consent is better, deeper consent — not no consent.</p>
+  </div>
+</div>
+
+<!-- POWER -->
+<div class="section" id="power">
+  <div class="section-header">
+    <div class="section-tag">Core Concept</div>
+    <h2>Power &amp; Hierarchy</h2>
+    <p class="lead">Power in the NHS is not just coercion — it is the structuring of what can be said, known, and done in a clinical encounter.</p>
+  </div>
+
+  <div class="card nhs-card">
+    <div class="card-label nhs-label">NHS Framework</div>
+    <h3>Governance, Accountability &amp; Hierarchy</h3>
+    <p>NHS power is organized hierarchically (consultants, registrars, junior doctors, nurses, allied health, support staff) and horizontally by specialism. It is held in place by regulatory bodies (GMC, NMC), governance frameworks, and accountability structures (CQC, NHS England). This is understood as protecting patients and maintaining standards — a necessary architecture for a system of this scale.</p>
+  </div>
+
+  <div class="card under-card">
+    <div class="card-label under-label">Undercommons Critique</div>
+    <h3>Power as structure, not just authority</h3>
+    <p>From the Undercommons perspective, power isn't primarily about who gives orders. It's about whose knowledge counts. In the NHS, medical knowledge (especially consultant-level) is primary. Nursing knowledge is secondary. The knowledge held by healthcare assistants — who often know patients most intimately — is tertiary. And patient knowledge of their own body and experience is often last in the room.</p>
+    <p>This hierarchy is not neutral. It was constructed historically and reflects broader social hierarchies of class, race, and gender. The consultant-as-authority is a historically specific figure, not a natural fact.</p>
+  </div>
+
+  <div class="card">
+    <h3>The ward round as a power enactment</h3>
+    <p>Consider a standard ward round: a consultant, registrar, junior doctors, medical students, and a nurse approach a patient's bed. Discussion of the case happens in front of the patient, primarily between clinicians. The nurse — who may have spent the past 12 hours with this patient — is consulted peripherally. The patient listens.</p>
+    <p>This is not merely a practical arrangement. It enacts a specific hierarchy of whose knowledge matters. The patient's knowledge of their own experience, and the nurse's relational knowledge, are structurally subordinated to the medical gaze — not because anyone decided this, but because the format reproduces it automatically.</p>
+  </div>
+
+  <div class="card alt-card">
+    <div class="card-label alt-label">Alternative Orientation</div>
+    <h3>The undercommons of NHS knowledge</h3>
+    <p>There is another knowledge-sharing network operating in the NHS, beneath official channels. It lives in the handover conversation, the break room, the nurse's notes that say something different from the medical record, the patient who has been on the ward long enough to know more about their condition than the registrar. This is the <span class="kt">undercommons</span> of NHS knowledge — unofficial, unrecognized, often more accurate and more care-ful than the sanctioned version.</p>
+  </div>
+
+  <div class="callout">
+    <strong>Challenge for you:</strong> When did a patient last tell you something about their body that changed your clinical thinking? When did a healthcare assistant tell you something a nurse or doctor had missed? What prevents that from being the norm rather than the exception?
+  </div>
+
+  <div class="critical-box">
+    <h4>Blind spot worth naming</h4>
+    <p>Hierarchy in clinical settings isn't only about power over patients — it also serves patient safety. A consultant overriding a junior's decision can save a life. The critique of hierarchy needs to be held alongside this reality. The question is not whether hierarchy should exist, but whether the specific form it takes in any given encounter is justified by its purpose — or is simply reproducing itself out of habit.</p>
+  </div>
+</div>
+
+<!-- FUGITIVITY -->
+<div class="section" id="fugitivity">
+  <div class="section-header">
+    <div class="section-tag">Core Concept</div>
+    <h2>Fugitivity in Care</h2>
+    <p class="lead">Fugitivity is not escape from the institution. It is escape within it — staying while refusing, quietly, the terms that reduce care to compliance.</p>
+  </div>
+
+  <div class="card">
+    <h3>What Moten &amp; Harney mean by fugitivity</h3>
+    <p>The "fugitive" in the Undercommons is someone who remains inside the institution while refusing to be fully captured by it. They may do the work well — even excellently — but they hold something back. They study in ways the institution doesn't sanction. They build relationships and knowledges that the institution cannot see or credit. They are in the university without being entirely of it.</p>
+  </div>
+
+  <blockquote>
+    <p>"To be in but not of the institution. To enter, but never to arrive."</p>
+    <cite>— Moten &amp; Harney, The Undercommons</cite>
+  </blockquote>
+
+  <div class="card nhs-card">
+    <div class="card-label nhs-label">NHS Framework</div>
+    <h3>The fully captured clinician</h3>
+    <p>The institution wants a certain kind of clinician: one who documents correctly, follows pathways, meets targets, communicates risk appropriately, obtains valid consent, and does not spend too long with any one patient. This clinician is efficient, accountable, and legible to the system — and these are not trivial virtues in a public institution under resource pressure.</p>
+  </div>
+
+  <div class="card under-card">
+    <div class="card-label under-label">Undercommons Lens</div>
+    <h3>The fugitive clinician</h3>
+    <p>The fugitive clinician does what is required — but also sits with a patient longer than the system recommends, shares more of themselves than protocol sanctions, thinks carefully about what a patient didn't say, brings knowledge from outside their official training. They refuse, quietly, to reduce their patient to a diagnosis and a pathway.</p>
+    <p>You may already be this person. The question is whether you recognise it and name it — or whether the institution has convinced you that these instincts are inefficiencies to be managed away.</p>
+  </div>
+
+  <div class="card alt-card">
+    <div class="card-label alt-label">Historical Examples</div>
+    <h3>Fugitive care in the NHS</h3>
+    <p><strong>The hospice movement</strong> was essentially fugitive — a refusal to let death be managed as medical failure, developed in the margins of the medical system by Dame Cicely Saunders before being (partially) captured and institutionalised.</p>
+    <p style="margin-top:10px;"><strong>Mutual aid during COVID</strong> — informal networks of patients, carers, and staff that developed when official systems were overwhelmed — are a vivid example of the undercommons becoming briefly visible.</p>
+    <p style="margin-top:10px;"><strong>Patient-led communities</strong> — long COVID networks, rare disease communities, mental health peer support groups — often generate care and knowledge that official systems can't, and then struggle to fit themselves back inside institutional frameworks.</p>
+  </div>
+
+  <div class="critical-box">
+    <h4>Blind spot worth naming</h4>
+    <p>There is a real danger in romanticising "fugitive" care in a clinical setting. A clinician who departs from protocol "because they know better" may be practising genuine care — or may be exposing a patient to harm. The history of medicine is full of charismatic departures from protocol that ended badly. Fugitivity requires good judgment, not just good intentions. How do you tell the difference?</p>
+  </div>
+</div>
+
+<!-- STUDY -->
+<div class="section" id="study">
+  <div class="section-header">
+    <div class="section-tag">Core Concept</div>
+    <h2>Study vs. Training</h2>
+    <p class="lead">Moten and Harney draw a sharp distinction between genuine study and institutional training. Both exist in the NHS — but only one is officially recognised.</p>
+  </div>
+
+  <div class="tension-box">
+    <div class="tension-side tension-left">
+      <h4>Training (institutionally recognised)</h4>
+      <ul>
+        <li>CPD modules and e-learning</li>
+        <li>Mandatory training compliance</li>
+        <li>Competency frameworks and portfolios</li>
+        <li>Appraisal and revalidation</li>
+        <li>Produces the credentialed clinician</li>
+        <li>Measurable, trackable, accountable</li>
+      </ul>
+    </div>
+    <div class="tension-side tension-right">
+      <h4>Study (undercommons)</h4>
+      <ul>
+        <li>Break room conversations about hard cases</li>
+        <li>Reading outside your specialism out of curiosity</li>
+        <li>Thinking <em>with</em> a patient, not <em>about</em> them</li>
+        <li>Informal wisdom shared between senior nurses</li>
+        <li>Produces genuine inquiry and genuine care</li>
+        <li>Invisible to governance</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>The consent module as institutional capture</h3>
+    <p>A mandatory e-learning module on consent teaches you the framework: capacity, information, voluntariness, documentation. It makes you compliant and protects the organisation. But has it taught you to sit with the discomfort of a patient who says yes when everything about their body language says no? Has it given you language for the social dynamics of deference to medical authority? Has it prepared you for what happens in the room that doesn't fit the form?</p>
+    <p>The module produces the credentialed clinician. Studying consent — genuinely, collectively, with discomfort — produces something else.</p>
+  </div>
+
+  <div class="card alt-card">
+    <div class="card-label alt-label">Alternative Practice</div>
+    <h3>What genuine study looks like in the NHS</h3>
+    <p><strong>Balint groups</strong> — where clinicians explore the emotional and relational dimensions of clinical work — are one example of genuine study happening within the NHS, often despite the institution rather than because of it.</p>
+    <p style="margin-top:10px;"><strong>Schwartz Rounds</strong>, where staff of all levels share stories about difficult cases, temporarily create a space where the institution loosens its grip on what counts as relevant knowledge.</p>
+    <p style="margin-top:10px;">The Undercommons would say: these spaces are the undercommons of the NHS. Protect them. Don't let them become another governance framework with attendance records and outcome measures.</p>
+  </div>
+</div>
+
+<!-- DEBT -->
+<div class="section" id="debt">
+  <div class="section-header">
+    <div class="section-tag">Core Concept</div>
+    <h2>Debt &amp; Obligation</h2>
+    <p class="lead">Moten and Harney are interested in debt as a social relation — not just financial debt, but the debts that structure how we feel we must behave.</p>
+  </div>
+
+  <div class="card">
+    <h3>Debt in the Undercommons</h3>
+    <p>The book argues that debt is one of the primary mechanisms by which institutions maintain their hold over people. Student debt produces compliant graduates who need employment. But moral and vocational debt operates the same way: if you feel you owe something — to the profession, to the institution, to the idea of care itself — you will work harder, accept more, complain less, and stay when you should leave.</p>
+  </div>
+
+  <div class="card nhs-card">
+    <div class="card-label nhs-label">Staff Debt</div>
+    <h3>The debts clinicians carry</h3>
+    <p>NHS clinicians often speak of a <em>vocation</em> — a calling that goes beyond employment. This is beautiful. It is also, from the Undercommons perspective, a mechanism of exploitation. If care is your vocation, you will care when you are exhausted, under-resourced, and unsupported. The NHS has historically relied on this vocational debt — the sense that one owes care to patients — to extract more labour than any contract specifies.</p>
+    <p>The moral injury that many NHS staff report is, in part, the experience of being unable to repay a debt the system has made unpayable.</p>
+  </div>
+
+  <div class="card nhs-card">
+    <div class="card-label nhs-label">Patient Debt</div>
+    <h3>The debts patients carry</h3>
+    <p>Patients in the NHS often feel they shouldn't "waste" clinical time — that they should not complain, should be grateful, should not present unless truly necessary. This sense of owing something to the NHS structures their behaviour in clinical encounters, often causing them to withhold information, minimise symptoms, or consent to treatment they have questions about rather than "be difficult."</p>
+  </div>
+
+  <div class="card alt-card">
+    <div class="card-label alt-label">Alternative Orientation</div>
+    <h3>What care beyond debt might look like</h3>
+    <p>Imagine a clinical encounter in which neither clinician nor patient is managing their sense of obligation — in which the patient is not performing gratitude and the clinician is not demonstrating competence. In which something more like genuine meeting is possible. This is rare. But you may have experienced it. Those moments are the undercommons of care.</p>
+  </div>
+
+  <div class="callout">
+    <strong>Challenge for you:</strong> When did your sense of vocational debt last lead you to give something you couldn't afford to give — whether time, emotional energy, or sleep? Who benefited from that transaction? Who noticed?
+  </div>
+</div>
+
+<!-- SCENARIOS -->
+<div class="section" id="scenarios">
+  <div class="section-header">
+    <div class="section-tag">Applied</div>
+    <h2>Clinical Scenarios</h2>
+    <p class="lead">Four clinical situations, read through three lenses. Toggle between the tabs in each scenario.</p>
+  </div>
+
+  <!-- SCENARIO 1 -->
+  <div class="scenario">
+    <div class="scenario-header">
+      <h3>1. The Consent Conversation</h3>
+      <p class="scenario-desc">A 68-year-old woman recently diagnosed with breast cancer attends a pre-operative appointment. The consultant explains the procedure, risks, and alternatives. She signs the form.</p>
+    </div>
+    <div class="scenario-tabs">
+      <div class="stab t-nhs" onclick="switchTab(this,'s1','nhs')">NHS Framework</div>
+      <div class="stab" onclick="switchTab(this,'s1','under')">Undercommons Lens</div>
+      <div class="stab" onclick="switchTab(this,'s1','alt')">Alternative</div>
+    </div>
+    <div class="scenario-panel active" id="s1-nhs">
+      <p>This is good clinical practice. The patient had capacity, received appropriate information about risks, benefits, and alternatives, and signed without coercion. The documentation is complete. Legally and ethically, consent has been validly obtained — and post-<em>Montgomery</em>, the standard of information disclosure is what a reasonable person would want to know.</p>
+    </div>
+    <div class="scenario-panel" id="s1-under">
+      <p>She was offered options the institution could provide, framed by clinical expertise, in a room in which the consultant held all the knowledge, the pen, and the institutional status. She has signed her agreement to a procedure that was, in significant respects, already arranged for her.</p>
+      <p>Was she asked what she wanted before being presented with options? Does she carry knowledge of her own body — perhaps years of knowing something wasn't right — that was never solicited? Did the "voluntary" nature of her consent account for the enormous deference many women feel toward medical authority, especially for cancer, especially with a consultant?</p>
+      <p>The consent form is a legal document designed to manage institutional liability as much as to express patient autonomy. These are not mutually exclusive purposes — but they are not the same purpose.</p>
+    </div>
+    <div class="scenario-panel" id="s1-alt">
+      <p>What if the appointment began not with the options but with a question: <em>"Before I tell you what we're recommending, I'd like to hear what you know about your own body — and what matters most to you in whatever happens next."</em></p>
+      <p>This is not a rejection of the consent framework. It is care that begins with the patient's expertise before moving to clinical expertise — that treats the encounter as a meeting of two knowledges rather than a transfer of information from expert to recipient. The legal framework might look the same at the end. But the encounter would be different, and the signature would mean something different.</p>
+      <p>Small, possible, fugitive.</p>
+    </div>
+  </div>
+
+  <!-- SCENARIO 2 -->
+  <div class="scenario">
+    <div class="scenario-header">
+      <h3>2. The Ward Round</h3>
+      <p class="scenario-desc">A consultant does a ward round with a registrar, two medical students, and a nurse. They discuss a patient's case at the foot of his bed. He listens.</p>
+    </div>
+    <div class="scenario-tabs">
+      <div class="stab t-nhs" onclick="switchTab(this,'s2','nhs')">NHS Framework</div>
+      <div class="stab" onclick="switchTab(this,'s2','under')">Undercommons Lens</div>
+      <div class="stab" onclick="switchTab(this,'s2','alt')">Alternative</div>
+    </div>
+    <div class="scenario-panel active" id="s2-nhs">
+      <p>The ward round is a core mechanism of inpatient care — where clinical decisions are reviewed, made, and communicated. Medical students learn by observing. The nurse provides continuity of knowledge about the patient's day-to-day presentation. The consultant holds clinical responsibility. The patient is informed of decisions and can ask questions.</p>
+    </div>
+    <div class="scenario-panel" id="s2-under">
+      <p>The patient is the subject of the conversation, not a participant in it. He is being studied — his case discussed, his body referenced — by people who are partly acquiring their credentials through this encounter. He listens to a conversation about himself from which he is structurally excluded.</p>
+      <p>The nurse, who may have spent the past twelve hours with this patient and knows his fears, his preferences, how he slept, what he said when he was distressed at 3am — speaks only when spoken to. The hierarchy of knowledge has placed the consultant's review of the chart above the nurse's lived proximity. These are not equal sources of knowledge, and the ward round format makes no room to pretend they are.</p>
+    </div>
+    <div class="scenario-panel" id="s2-alt">
+      <p>What if the ward round began with: <em>"Mr. [name], we've come to talk about your care. Can you tell us how you're feeling, and what questions have been on your mind?"</em> — before any clinical discussion?</p>
+      <p>What if the nurse was asked first: <em>"What do you know about this patient that isn't in the notes?"</em></p>
+      <p>These are small fugitive practices. They require no system change — only a willingness to reorganise whose knowledge leads, and whose waits. The ward round format is not a law of nature. It is a convention. Conventions can be gently bent.</p>
+    </div>
+  </div>
+
+  <!-- SCENARIO 3 -->
+  <div class="scenario">
+    <div class="scenario-header">
+      <h3>3. The Break Room</h3>
+      <p class="scenario-desc">Nurses on a night shift gather in the break room at 2am. They talk about a difficult patient, share worries about a colleague who's been struggling, pass food around, and laugh.</p>
+    </div>
+    <div class="scenario-tabs">
+      <div class="stab t-nhs" onclick="switchTab(this,'s3','nhs')">NHS Framework</div>
+      <div class="stab" onclick="switchTab(this,'s3','under')">Undercommons Lens</div>
+      <div class="stab" onclick="switchTab(this,'s3','alt')">Alternative</div>
+    </div>
+    <div class="scenario-panel active" id="s3-nhs">
+      <p>Informal, outside the clinical record. Staff are on a break — a contractual entitlement. The conversation is not documented, not supervised, not part of any clinical governance framework. It may or may not be clinical in content. It is essentially invisible to the institution, and in some readings (information governance, confidentiality) it is a potential source of concern.</p>
+    </div>
+    <div class="scenario-panel" id="s3-under">
+      <p>This is the undercommons of the NHS. This is where genuine study happens — where clinical knowledge is shared outside official channels, where junior staff learn from senior staff without the mediation of a training framework, where care for <em>each other</em> happens (not just for patients), where the terms of the institution are quietly renegotiated.</p>
+      <p>The laughter is not a failure of professionalism. It is survival. It is the preservation of the self that makes care possible. The break room is where nurses maintain the humanity that the institution, by morning, will again demand they deploy in officially sanctioned ways. This is precious and irreplaceable. The institution does not know it exists.</p>
+    </div>
+    <div class="scenario-panel" id="s3-alt">
+      <p>The break room should not be "improved" by management or converted into a reflective practice space with outcomes and facilitators. Its value is precisely its invisibility and its freedom from institutional purpose.</p>
+      <p>The question is not how to formalise it but how to protect it — how to build institutional culture that understands the informal networks of care and knowledge as load-bearing structures, not inefficiencies. This means protecting time, protecting space, and stopping the colonisation of every spare moment with mandatory training.</p>
+    </div>
+  </div>
+
+  <!-- SCENARIO 4 -->
+  <div class="scenario">
+    <div class="scenario-header">
+      <h3>4. Capacity &amp; Best Interests</h3>
+      <p class="scenario-desc">A 45-year-old man with severe depression refuses food. An assessment concludes he lacks capacity to make this decision at this time. Treatment proceeds in his best interests under the Mental Capacity Act.</p>
+    </div>
+    <div class="scenario-tabs">
+      <div class="stab t-nhs" onclick="switchTab(this,'s4','nhs')">NHS Framework</div>
+      <div class="stab" onclick="switchTab(this,'s4','under')">Undercommons Lens</div>
+      <div class="stab" onclick="switchTab(this,'s4','alt')">Alternative</div>
+    </div>
+    <div class="scenario-panel active" id="s4-nhs">
+      <p>The Mental Capacity Act provides a clear and carefully designed framework. If a person lacks capacity to make a specific decision at a specific time, clinicians must act in their best interests, taking into account their past expressed wishes and values, and the views of those who know them well. This is a protective framework for some of the most vulnerable people in the NHS — designed with considerable ethical care.</p>
+    </div>
+    <div class="scenario-panel" id="s4-under">
+      <p>This is the sharpest instance of institutional power operating on a person. His refusal — an expression of his will, however suffering-shaped — has been reclassified as a symptom of incapacity rather than a choice requiring response. He becomes an object of clinical management. The institution becomes the author of his "best interests."</p>
+      <p>The critique is not that this is wrong. It is that it requires extraordinary humility. "Best interests" is being determined by people whose knowledge of him is clinical and recent, within a framework that treats individual survival as a primary value — which may not be his primary value. Whose version of a good life underlies the best interests decision?</p>
+    </div>
+    <div class="scenario-panel" id="s4-alt">
+      <p>The law already requires consultation with those who know the patient well, and genuine consideration of his past values and wishes. The Undercommons pushes further: what would it mean for his community — his relationships, his history, his own past words — to be genuinely constitutive of the decision, not merely consulted as a formality?</p>
+      <p>What would it mean to sit longer with the discomfort of not knowing, rather than moving quickly to clinical management? This is not an argument against the MCA. It is an argument for using the MCA with its full seriousness — and for remembering that a best interests decision is an act of profound power that should never feel routine.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ALTERNATIVES -->
+<div class="section" id="alternatives">
+  <div class="section-header">
+    <div class="section-tag">Applied</div>
+    <h2>Alternatives</h2>
+    <p class="lead">Moten and Harney do not offer a programme. They offer a way of seeing what is already happening — and a language for valuing it.</p>
+  </div>
+
+  <div class="card alt-card">
+    <div class="card-label alt-label">Hapticality</div>
+    <h3>Feeling with</h3>
+    <p><span class="kt">Hapticality</span> is one of the book's most evocative concepts — the capacity to feel with others, to sense collectively. It is opposed to the individualism of liberal consent (I, the autonomous subject, decide) and to the pure cognitivism of clinical assessment (I observe, assess, diagnose, prescribe).</p>
+    <p>In clinical care, hapticality might be the moment when you know something is wrong before you can say why. The practised attunement of an experienced nurse who enters a room and reads the atmosphere before reading the chart. Touch — literal touch — as a form of knowing, not just a clinical technique. The sense of a family member who says "she doesn't seem right" and is correct.</p>
+    <p>The NHS trains this out of clinicians in some respects, by insisting that knowledge be observable, measurable, and documented. Hapticality is precisely what cannot be documented — which is why the institution cannot see it, credit it, or adequately replace it when it is gone.</p>
+  </div>
+
+  <div class="card alt-card">
+    <div class="card-label alt-label">Fugitive Planning</div>
+    <h3>Creating within and against</h3>
+    <p>The book distinguishes between <em>policy</em> (what the institution produces: frameworks, guidelines, targets, strategies) and <em>fugitive planning</em> (what happens beneath — the informal, the unrecognised, the care that happens because someone decided it mattered even though no protocol required it).</p>
+    <p>In the NHS: the ward that collectively decides to do something differently. The team that creates space for conversations the structure doesn't provide for. The clinician who advocates persistently for a patient in ways that aren't in their job description. The small, steady refusals of reduction.</p>
+  </div>
+
+  <div class="card alt-card">
+    <div class="card-label alt-label">Care Beyond Consent</div>
+    <h3>Ongoing attunement</h3>
+    <p>An alternative to consent-as-transaction might be care-as-attunement: an ongoing, relational process in which the clinician is continuously responsive to the patient's evolving sense of what they want and need — not just at the formal consent moment but throughout the encounter and the relationship.</p>
+    <p>This does not abolish consent. But it asks: what does good care look like in the spaces between the signature and the procedure? What does it mean to keep asking, to keep checking, to keep including the patient's expertise rather than relying on a moment of consent to have resolved everything?</p>
+  </div>
+
+  <div class="card alt-card">
+    <div class="card-label alt-label">The Commons of Care</div>
+    <h3>What the NHS relies on but cannot see</h3>
+    <p>Much of what sustains NHS care is a commons — a shared resource of goodwill, vocation, informal knowledge, and mutual care between staff. This commons is invisible to institutional metrics. It cannot be managed, only depleted. The NHS depletes it through: unpaid labour extracted via vocational obligation; repeated restructuring that destroys relational knowledge; bureaucratic load that crowds out genuine care; and a governance culture that sees informal networks as risks rather than resources.</p>
+    <p>Recognising the commons of care does not mean formalising it. It means stopping the things that erode it.</p>
+  </div>
+
+  <div class="critical-box">
+    <h4>A final challenge</h4>
+    <p>The Undercommons does not tell you what to do. It offers a vocabulary for seeing what is already there. The risk of any framework is that it becomes another thing the institution absorbs — another training module, another reflective practice tool, another box on the appraisal form. The question is whether you can use these ideas to think, and then let the thinking change how you act — without the institution knowing it happened.</p>
+  </div>
+</div>
+
+<!-- FLASHCARDS -->
+<div class="section" id="flashcards">
+  <div class="section-header">
+    <div class="section-tag">Practice</div>
+    <h2>Concept Flashcards</h2>
+    <p class="lead">Test your recall of key Undercommons concepts and their NHS applications. Click a card to reveal.</p>
+  </div>
+  <p class="flip-hint">Click the card to flip it &nbsp;·&nbsp; use the arrows to navigate</p>
+  <div id="fc-area"></div>
+  <div class="fc-nav">
+    <button class="fc-btn" onclick="prevCard()">← Previous</button>
+    <span class="fc-count" id="fc-count">1 / 9</span>
+    <button class="fc-btn" onclick="nextCard()">Next →</button>
+  </div>
+</div>
+
+<!-- REFLECTION -->
+<div class="section" id="reflection">
+  <div class="section-header">
+    <div class="section-tag">Practice</div>
+    <h2>Reflection Space</h2>
+    <p class="lead">Questions designed to unsettle, not resolve. Use these for personal reflection, supervision, or discussion with colleagues. Your writing stays on your device.</p>
+  </div>
+
+  <div class="reflection-prompt">
+    <div class="prompt-num">Prompt 01 — Consent</div>
+    <p>Think of a consent conversation you found difficult or unsatisfying — where something felt off, even if everything was technically correct. What was happening beneath the surface of the framework? Whose knowledge led the encounter? What was left unsaid?</p>
+    <textarea placeholder="Write your thoughts here..."></textarea>
+  </div>
+
+  <div class="reflection-prompt">
+    <div class="prompt-num">Prompt 02 — The undercommons of your environment</div>
+    <p>Where is the undercommons in your clinical environment? Where does genuine care, genuine study, and genuine mutual support happen — outside official recognition? What would be lost if it were formalised or brought into governance?</p>
+    <textarea placeholder="Write your thoughts here..."></textarea>
+  </div>
+
+  <div class="reflection-prompt">
+    <div class="prompt-num">Prompt 03 — Power &amp; knowledge</div>
+    <p>Whose knowledge most shaped a recent clinical decision you were involved in? Whose knowledge was absent, or present but not heard? If the hierarchy of knowledge had been inverted — if the patient or the healthcare assistant had led — what might have been different?</p>
+    <textarea placeholder="Write your thoughts here..."></textarea>
+  </div>
+
+  <div class="reflection-prompt">
+    <div class="prompt-num">Prompt 04 — Debt</div>
+    <p>Do you feel you owe something to the NHS, to your vocation, or to your patients — beyond what your contract requires? How has that shaped your behaviour, your hours, your wellbeing? Can you identify a moment when that sense of debt was exploited rather than honoured?</p>
+    <textarea placeholder="Write your thoughts here..."></textarea>
+  </div>
+
+  <div class="reflection-prompt">
+    <div class="prompt-num">Prompt 05 — Fugitivity</div>
+    <p>Describe a moment when you provided care that was outside protocol, outside what was required, outside what the institution would have sanctioned — and that felt more genuinely caring for it. What was the risk you took? What made it possible? What would need to be different for it to be possible more often?</p>
+    <textarea placeholder="Write your thoughts here..."></textarea>
+  </div>
+
+  <div class="reflection-prompt">
+    <div class="prompt-num">Prompt 06 — The alternative</div>
+    <p>If you could redesign one clinical interaction — one moment the institution currently handles badly — using the ideas from this tool as your guide, what would it look like? What would have to change for that to be possible? What's already within your power?</p>
+    <textarea placeholder="Write your thoughts here..."></textarea>
+  </div>
+
+  <div class="reflection-prompt">
+    <div class="prompt-num">Prompt 07 — Pushback</div>
+    <p>Where does the Undercommons framework feel wrong or unhelpful when applied to your clinical work? Where does it romanticise something that needs to be taken more seriously — or miss something that matters? What does the framework fail to see?</p>
+    <textarea placeholder="Write your thoughts here..."></textarea>
+  </div>
+
+  <div class="page-footer">
+    <p>This learning tool applies Fred Moten &amp; Stefano Harney's <em>The Undercommons: Fugitive Planning and Black Study</em> (Minor Compositions / AK Press, 2013) to NHS clinical practice. The interpretations, NHS extrapolations, and clinical scenarios are original applications, not direct quotations from the text. All clinical scenarios are fictional composites.</p>
+    <p style="margin-top:8px;">Developed for personal and professional development use only.</p>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ---- NAVIGATION ----
+function goTo(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(a => a.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const link = document.querySelector(`[data-s="${id}"]`);
+  if (link) link.classList.add('active');
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll('.nav-link').forEach(link => {
+  link.addEventListener('click', e => { e.preventDefault(); goTo(link.dataset.s); });
+});
+
+// ---- SCENARIO TABS ----
+function switchTab(el, scenario, view) {
+  el.closest('.scenario-tabs').querySelectorAll('.stab').forEach(t => t.className = 'stab');
+  el.closest('.scenario').querySelectorAll('.scenario-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add(`t-${view}`);
+  document.getElementById(`${scenario}-${view}`).classList.add('active');
+}
+
+// ---- FLASHCARDS ----
+const cards = [
+  { q: "What is 'the undercommons' according to Moten and Harney?", a: "Not a place, but a set of relationships and practices that exist within and against institutional structures — where genuine study and collective care happen outside official recognition and reward." },
+  { q: "What is the Undercommons critique of informed consent in clinical settings?", a: "Consent is obtained within options pre-selected by clinical expertise and institutional resources. The patient says yes or no within a structure they didn't design. The power differential is structural, not removable by good intentions — and the signature manages institutional liability as much as patient autonomy." },
+  { q: "What does 'fugitivity' mean in The Undercommons, and what might it look like for a clinician?", a: "Remaining within the institution while refusing to be fully captured by its terms. For a clinician: providing care that exceeds protocol, building knowledge the institution can't credit, sitting with a patient longer than the system recommends — in but not entirely of the NHS." },
+  { q: "What is the distinction between 'study' and 'training' in Moten and Harney?", a: "Training produces credentialed, compliant institutional subjects (CPD modules, portfolios, mandatory e-learning). Study is open-ended, collective, pleasurable inquiry — it produces genuine knowledge and genuine care. The institution recognises training; study happens in its margins." },
+  { q: "What is 'hapticality' in The Undercommons, and how does it relate to clinical care?", a: "The capacity to feel with others — collective sensing and attunement — as opposed to individual cognitive decision-making. In care: the practised sensitivity that knows something is wrong before it can be articulated; touch as a form of knowing; the family member who senses that something has changed." },
+  { q: "How does vocational debt operate in the NHS, through an Undercommons lens?", a: "The sense that one owes care beyond what contracts specify — because care is a vocation — leads clinicians to give more than they can afford. The NHS has historically relied on this to extract unpaid labour. When the debt becomes unpayable, it produces the moral injury many NHS staff report." },
+  { q: "How does patient debt to the NHS affect clinical encounters?", a: "Patients often feel they shouldn't 'waste' NHS time, should be grateful, and should not be difficult. This debt-sense structures their behaviour — causing minimisation of symptoms, reluctance to ask questions, and consent to treatment they have doubts about." },
+  { q: "What is 'fugitive planning' versus 'policy' in the NHS context?", a: "Policy is what the institution produces: frameworks, guidelines, targets, strategies. Fugitive planning happens beneath — informal care decisions, collective team adaptations, practices that exceed protocol because someone decided they mattered. Both exist in the NHS; only one is visible." },
+  { q: "What is the most important blind spot when applying Undercommons ideas to clinical practice?", a: "The critique of consent risks sounding like an argument for paternalism. The critique of hierarchy risks romanticising protocol departure, which can harm patients. And the framework itself can be institutionally captured — turned into another training module. The goal is thinking that changes practice, not a new orthodoxy." }
+];
+
+let cur = 0, flipped = false;
+
+function renderCard() {
+  document.getElementById('fc-area').innerHTML = `
+    <div class="flashcard-container">
+      <div class="flashcard" id="fc" onclick="flipCard()">
+        <div class="fc-face fc-front">
+          <div class="card-label under-label" style="margin-bottom:14px;">Question ${cur+1}</div>
+          <p style="font-size:17px;color:#fff;line-height:1.55;">${cards[cur].q}</p>
+          <p style="font-size:11px;font-family:sans-serif;color:var(--text-dim);margin-top:18px;">Click to reveal answer</p>
+        </div>
+        <div class="fc-face fc-back">
+          <div class="card-label alt-label" style="margin-bottom:14px;">Answer</div>
+          <p style="font-size:15px;color:var(--text);line-height:1.65;">${cards[cur].a}</p>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('fc-count').textContent = `${cur+1} / ${cards.length}`;
+  flipped = false;
+}
+
+function flipCard() {
+  flipped = !flipped;
+  document.getElementById('fc').classList.toggle('flipped', flipped);
+}
+function nextCard() { cur = (cur+1) % cards.length; renderCard(); }
+function prevCard() { cur = (cur-1+cards.length) % cards.length; renderCard(); }
+
+renderCard();
+</script>
+</body>
+</html>
