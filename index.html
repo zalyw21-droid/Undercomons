@@ -156,18 +156,92 @@ textarea::placeholder{color:rgba(255,255,255,0.18);}
 .critical-box h4{font-size:11px;color:var(--alt);text-transform:uppercase;letter-spacing:.08em;font-family:sans-serif;margin-bottom:8px;}
 .critical-box p{font-size:14px;font-family:sans-serif;}
 
+/* MOBILE TOP BAR */
+#mobile-bar{display:none;position:fixed;top:0;left:0;right:0;height:54px;background:var(--sidebar-bg);border-bottom:1px solid var(--border);z-index:200;align-items:center;justify-content:space-between;padding:0 18px;}
+#mobile-title{font-size:11px;font-family:sans-serif;color:var(--under);letter-spacing:.07em;text-transform:uppercase;line-height:1.4;}
+#hamburger{background:none;border:none;cursor:pointer;padding:6px;display:flex;flex-direction:column;gap:5px;-webkit-tap-highlight-color:transparent;}
+#hamburger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:all .22s;}
+#hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+#hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0);}
+#hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+#mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:150;-webkit-tap-highlight-color:transparent;}
+#mob-overlay.on{display:block;}
+#close-sb{display:none;}
+
 @media(max-width:860px){
-  .concept-grid,.tension-box{grid-template-columns:1fr;}
-  #main{padding:30px 22px;}
-  #sidebar{display:none;}
-  #main{margin-left:0;}
+  body{display:block;}
+  #mobile-bar{display:flex;}
+  #sidebar{
+    transform:translateX(-100%);
+    transition:transform .24s ease;
+    top:0;
+    padding-top:68px;
+    z-index:160;
+    width:280px;
+    min-width:280px;
+  }
+  #sidebar.open{transform:translateX(0);}
+  #close-sb{
+    display:block;
+    position:absolute;
+    top:14px;
+    right:14px;
+    background:none;
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    border-radius:6px;
+    padding:5px 12px;
+    font-size:12px;
+    font-family:sans-serif;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+  #main{margin-left:0;padding:72px 16px 48px;max-width:100%;}
+  .concept-grid{grid-template-columns:1fr;}
+  .tension-box{grid-template-columns:1fr;gap:0;}
+  .tension-right{border-top:1px solid var(--border);}
+  .hero h2{font-size:24px;}
+  h2{font-size:22px;}
+  h3{font-size:16px;}
+  .lead{font-size:15px;}
+  .card{padding:18px;}
+  .card p{font-size:15px;}
+  .scenario-header{padding:16px 18px;}
+  .scenario-tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .scenario-tabs::-webkit-scrollbar{display:none;}
+  .stab{white-space:nowrap;padding:10px 14px;font-size:10px;flex-shrink:0;}
+  .scenario-panel{padding:16px 18px;}
+  .scenario-panel p{font-size:15px;}
+  blockquote{padding:12px 14px;margin:16px 0;}
+  .callout{font-size:13px;}
+  .critical-box p{font-size:13px;}
+  .legend{flex-direction:column;gap:10px;}
+  .flashcard{min-height:280px;}
+  .fc-face{min-height:280px;padding:22px;}
+  .fc-nav{gap:10px;}
+  .fc-btn{padding:10px 14px;font-size:12px;}
+  .reflection-prompt{padding:16px;}
+  .reflection-prompt>p{font-size:15px;}
+  textarea{font-size:16px;}/* prevent iOS zoom */
+  .hero{padding:6px 0 28px;}
+  .section-header{margin-bottom:24px;}
 }
 </style>
 </head>
 <body>
 
+<!-- MOBILE TOP BAR -->
+<div id="mobile-bar">
+  <div id="mobile-title">The Undercommons &amp; The NHS</div>
+  <button id="hamburger" onclick="toggleMenu()" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</div>
+<div id="mob-overlay" onclick="closeMenu()"></div>
+
 <!-- ======== SIDEBAR ======== -->
 <div id="sidebar">
+  <button id="close-sb" onclick="closeMenu()">✕ Close</button>
   <div class="sidebar-title">
     <h1>The Undercommons<br>&amp; The NHS</h1>
     <p>A Learning Tool for Clinicians</p>
@@ -695,7 +769,7 @@ textarea::placeholder{color:rgba(255,255,255,0.18);}
     <h2>Concept Flashcards</h2>
     <p class="lead">Test your recall of key Undercommons concepts and their NHS applications. Click a card to reveal.</p>
   </div>
-  <p class="flip-hint">Click the card to flip it &nbsp;·&nbsp; use the arrows to navigate</p>
+  <p class="flip-hint">Tap the card to flip it &nbsp;·&nbsp; use the arrows to navigate</p>
   <div id="fc-area"></div>
   <div class="fc-nav">
     <button class="fc-btn" onclick="prevCard()">← Previous</button>
@@ -763,6 +837,20 @@ textarea::placeholder{color:rgba(255,255,255,0.18);}
 </div><!-- /main -->
 
 <script>
+// ---- MOBILE MENU ----
+function toggleMenu() {
+  const open = document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('mob-overlay').classList.toggle('on', open);
+  document.getElementById('hamburger').classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+}
+function closeMenu() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('mob-overlay').classList.remove('on');
+  document.getElementById('hamburger').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
 // ---- NAVIGATION ----
 function goTo(id) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -770,6 +858,7 @@ function goTo(id) {
   document.getElementById(id).classList.add('active');
   const link = document.querySelector(`[data-s="${id}"]`);
   if (link) link.classList.add('active');
+  closeMenu();
   window.scrollTo(0, 0);
 }
 document.querySelectorAll('.nav-link').forEach(link => {
@@ -806,7 +895,7 @@ function renderCard() {
         <div class="fc-face fc-front">
           <div class="card-label under-label" style="margin-bottom:14px;">Question ${cur+1}</div>
           <p style="font-size:17px;color:#fff;line-height:1.55;">${cards[cur].q}</p>
-          <p style="font-size:11px;font-family:sans-serif;color:var(--text-dim);margin-top:18px;">Click to reveal answer</p>
+          <p style="font-size:11px;font-family:sans-serif;color:var(--text-dim);margin-top:18px;">Tap to reveal answer</p>
         </div>
         <div class="fc-face fc-back">
           <div class="card-label alt-label" style="margin-bottom:14px;">Answer</div>
